@@ -1,0 +1,144 @@
+---
+title: "Next.js Features Powering This Portfolio"
+date: "2026-03-07"
+description: "A look at the Next.js App Router features used to build this single-page portfolio — static generation, MDX rendering, metadata API, redirects, and font optimization."
+tags: ["Next.js", "React", "TypeScript", "App Router"]
+---
+
+This portfolio site is built with Next.js 16 and the App Router. Here's a rundown of the framework features that make it work.
+
+## App Router and File-Based Routing
+
+The routing structure is minimal. The main page lives at `src/app/page.tsx` as a single scrollable page. Blog posts use dynamic routes:
+
+```
+src/app/
+├── page.tsx              # Single-page portfolio
+├── layout.tsx            # Root layout (nav, footer, fonts)
+├── icon.svg              # Favicon (auto-served by Next.js)
+└── blog/
+    ├── page.tsx          # Blog listing
+    └── [slug]/page.tsx   # Individual posts
+```
+
+Next.js auto-serves `icon.svg` as the site favicon — no `<link>` tags needed. Just drop an SVG in the app directory.
+
+## Static Site Generation
+
+Every page on this site is statically generated at build time. There's no runtime server — Vercel serves pre-rendered HTML.
+
+Blog posts use `generateStaticParams` to pre-render each slug:
+
+```tsx
+export async function generateStaticParams() {
+  const posts = getAllPosts();
+  return posts.map((post) => ({ slug: post.slug }));
+}
+```
+
+The `getAllPosts` function reads MDX files from the filesystem at build time using Node's `fs` module. This works because `generateStaticParams` runs during the build, not in the browser.
+
+## MDX Blog with next-mdx-remote
+
+Blog posts are MDX files in `content/blog/` with YAML frontmatter. The rendering pipeline:
+
+1. **`gray-matter`** parses frontmatter (title, date, description, tags)
+2. **`next-mdx-remote/rsc`** renders MDX to React server components
+3. **`rehype-pretty-code`** with **Shiki** handles syntax highlighting
+
+The server component import is important — `next-mdx-remote/rsc` works in React Server Components, while the default export requires client-side `useState`:
+
+```tsx
+import { MDXRemote } from "next-mdx-remote/rsc";
+import rehypePrettyCode from "rehype-pretty-code";
+
+export async function MdxContent({ source }: { source: string }) {
+  return (
+    <div className="prose">
+      <MDXRemote
+        source={source}
+        options={{
+          mdxOptions: {
+            rehypePlugins: [
+              [rehypePrettyCode, { theme: "github-light" }],
+            ],
+          },
+        }}
+      />
+    </div>
+  );
+}
+```
+
+## Metadata API
+
+The root layout defines default metadata with a template pattern:
+
+```tsx
+export const metadata: Metadata = {
+  title: {
+    default: "Gaurav Kapoor — Engineering Lead",
+    template: "%s | Gaurav Kapoor",
+  },
+  description: "Portfolio of Gaurav Kapoor...",
+  openGraph: { ... },
+};
+```
+
+Child pages override the title using the template. The blog listing page sets `title: "Blog"` which renders as "Blog | Gaurav Kapoor". Individual blog posts use `generateMetadata` for dynamic titles based on frontmatter.
+
+## Redirects for Legacy Routes
+
+The site migrated from multi-page to single-page. To avoid breaking bookmarks, `next.config.ts` maps old routes to anchor links:
+
+```ts
+const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      { source: "/about", destination: "/#about", permanent: true },
+      { source: "/experience", destination: "/#experience", permanent: true },
+      { source: "/contact", destination: "/#contact", permanent: true },
+    ];
+  },
+};
+```
+
+These are 308 permanent redirects — search engines update their indexes, and browsers cache the redirect.
+
+## Google Fonts with next/font
+
+Next.js optimizes Google Fonts by downloading them at build time and self-hosting. No external requests at runtime:
+
+```tsx
+import { Source_Sans_3, Source_Serif_4, Source_Code_Pro } from "next/font/google";
+
+const sourceSans = Source_Sans_3({
+  variable: "--font-sans",
+  subsets: ["latin"],
+  display: "swap",
+});
+```
+
+Each font gets a CSS variable (`--font-sans`, `--font-serif`, `--font-mono`). The variables are applied to the `<body>` element and consumed via Tailwind's `font-sans`/`font-serif`/`font-mono` utilities. The `display: "swap"` setting prevents invisible text during font loading.
+
+## Client vs Server Components
+
+Most of this site is server-rendered. The client boundary (`"use client"`) is used only where browser APIs are needed:
+
+- **`page.tsx`** — uses `framer-motion` for entrance animations
+- **`nav.tsx`** — uses `useState` for mobile menu toggle and `useScrollSpy` for IntersectionObserver
+- **`section.tsx`** — uses `framer-motion`'s `whileInView` for scroll-triggered animations
+- **`section-nav.tsx`** — uses `useScrollSpy` for the sidebar navigation
+
+Server components like `layout.tsx`, blog pages, and `experience-card.tsx` ship zero JavaScript to the client.
+
+## What's Not Here
+
+A few things I intentionally skipped:
+
+- **No ISR or dynamic rendering** — all content is in the repo, so full static generation is simpler and faster
+- **No `next/image`** — the site has no images yet; when it does, the Image component's automatic optimization will be worth adding
+- **No middleware** — no auth, no A/B testing, no geo-routing needed for a portfolio
+- **No API routes** — all data is static; no server-side endpoints
+
+The result is a fully static site that deploys to Vercel's edge network with zero cold starts.
