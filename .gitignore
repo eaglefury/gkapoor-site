@@ -141,3 +141,4 @@ vite.config.ts.timestamp-*
 # Claude instructions
 CLAUDE.md
 .claude/settings.json
+.DS_Store

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { buttonVariants } from "@/components/ui/button";
@@ -24,25 +25,38 @@ export default function Home() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="space-y-6"
+          className="flex flex-col-reverse gap-10 sm:flex-row sm:items-center sm:justify-between"
         >
-          <p className="text-base font-medium tracking-wide text-muted-foreground">
-            Hey, I&apos;m
-          </p>
-          <h1 className="text-5xl font-bold tracking-tight sm:text-6xl">
-            Gaurav Kapoor
-          </h1>
-          <p className="max-w-xl text-xl leading-relaxed text-muted-foreground">
-            Senior Full-Stack developer and Engineering Lead with 20+ years of
-            experience building distributed, cloud-based solutions at EA Sports,
-            Microsoft, and more. I write code, lead teams, ship products, and
-            build engineering practices from the ground up.
-          </p>
+          <div className="space-y-6">
+            <p className="text-base font-medium tracking-wide text-muted-foreground">
+              Hey, I&apos;m
+            </p>
+            <h1 className="text-5xl font-bold tracking-tight sm:text-6xl">
+              Gaurav Kapoor
+            </h1>
+            <p className="max-w-xl text-xl leading-relaxed text-muted-foreground">
+              20+ years of experience building distributed, cloud-based
+              solutions at EA Sports, Microsoft, and more. I write code, lead
+              teams, ship products, and build engineering practices from the
+              ground up.
+            </p>
 
-          <div className="flex flex-wrap gap-3 pt-4">
-            <a href="#experience" className={buttonVariants()}>
-              View Experience
-            </a>
+            <div className="flex flex-wrap gap-3 pt-4">
+              <a href="#experience" className={buttonVariants()}>
+                View Experience
+              </a>
+            </div>
+          </div>
+
+          <div className="h-64 w-52 shrink-0 overflow-hidden rounded-xl">
+            <Image
+              src="/avatar.jpg"
+              alt="Gaurav Kapoor"
+              width={208}
+              height={256}
+              className="h-full w-full object-cover object-[35%_40%]"
+              priority
+            />
           </div>
         </motion.div>
 
@@ -64,7 +78,7 @@ export default function Home() {
           <div className="mt-6 space-y-4 text-muted-foreground leading-relaxed">
             <p>
               I&apos;m Gaurav Kapoor — a Senior Full-Stack Developer and
-              Engineering Lead with over 20 years of hands-on development and
+              Engineering Lead with many years of hands-on development and
               technical leadership experience. I&apos;ve built and shipped
               high-impact, distributed, cloud-based solutions at companies like{" "}
               <strong className="text-foreground">Electronic Arts</strong>,{" "}
