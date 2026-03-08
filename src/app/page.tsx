@@ -168,16 +168,16 @@ export default function Home() {
             Awards &amp; Recognition
           </h2>
           <ul className="mt-6 space-y-3">
-            <li className="text-lg text-muted-foreground">
+            <li className="text-xl text-muted-foreground">
               Certified ScrumMaster
             </li>
-            <li className="text-lg text-muted-foreground">
+            <li className="text-xl text-muted-foreground">
               Gold Star Award — Microsoft
             </li>
-            <li className="text-lg text-muted-foreground">
+            <li className="text-xl text-muted-foreground">
               Lighthouse Team Award — Microsoft
             </li>
-            <li className="text-lg text-muted-foreground">
+            <li className="text-xl text-muted-foreground">
               Star Performer Award — Tech Mahindra
             </li>
           </ul>
@@ -245,7 +245,7 @@ function EducationEntry({
   return (
     <div>
       <h3 className="text-xl font-semibold">{school}</h3>
-      <p className="text-lg text-muted-foreground">
+      <p className="text-xl text-muted-foreground">
         {degree} &middot; {year}
       </p>
     </div>
@@ -277,7 +277,7 @@ function ContactLink({
         <span className="text-sm font-medium uppercase tracking-wider text-muted-foreground">
           {label}
         </span>
-        <span className="text-lg text-foreground">{display}</span>
+        <span className="text-xl text-foreground">{display}</span>
       </div>
     </Link>
   );

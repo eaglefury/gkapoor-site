@@ -15,21 +15,21 @@ export function ExperienceCard({ experience }: ExperienceCardProps) {
       <div className="space-y-2">
         <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
           <h3 className="text-xl font-semibold">{experience.company}</h3>
-          <span className="text-base text-muted-foreground">
+          <span className="text-xl text-muted-foreground">
             {experience.period}
           </span>
         </div>
-        <p className="text-base font-medium text-muted-foreground">
+        <p className="text-xl font-medium text-muted-foreground">
           {experience.role}
         </p>
-        <p className="text-base leading-relaxed text-muted-foreground">
+        <p className="text-xl leading-relaxed text-muted-foreground">
           {experience.description}
         </p>
         <ul className="space-y-1 pt-1">
           {experience.highlights.map((highlight) => (
             <li
               key={highlight}
-              className="text-base text-muted-foreground before:mr-2 before:content-['—']"
+              className="text-xl text-muted-foreground before:mr-2 before:content-['—']"
             >
               {highlight}
             </li>
